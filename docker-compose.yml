@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: atlas
+      POSTGRES_DB: atlas
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://atlas:atlas@postgres:5432/atlas
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn atlas.gateway.app:app --host 0.0.0.0 --port 8000 --reload
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://atlas:atlas@postgres:5432/atlas
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A atlas.infra.celery_app worker --loglevel=info -Q atlas.default
+
+volumes:
+  pgdata:
