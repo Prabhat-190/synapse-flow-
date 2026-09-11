@@ -71,8 +71,7 @@ class SubtaskDAG(BaseModel):
         return [
             n
             for n in self.nodes
-            if n.status == SubtaskStatus.PENDING
-            and all(dep in completed for dep in n.dependencies)
+            if n.status == SubtaskStatus.PENDING and all(dep in completed for dep in n.dependencies)
         ]
 
     def is_complete(self) -> bool:

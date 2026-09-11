@@ -2,8 +2,8 @@
 
 import pytest
 
-from synapse.agents.orchestrator import OrchestratorAgent
 from synapse.agents.decomposition import DecompositionAgent
+from synapse.agents.orchestrator import OrchestratorAgent
 from synapse.core.blackboard import Blackboard
 from synapse.core.exceptions import BudgetOverflowError, PromptInjectionError
 from synapse.core.models import AgentRole

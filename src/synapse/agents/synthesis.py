@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from synapse.agents.base import BaseAgent
 from synapse.core.blackboard import Blackboard
-from synapse.core.models import AgentRole, SpanAction, SynthesisAction
+from synapse.core.models import AgentRole, SpanAction
 
 
 class SynthesisAgent(BaseAgent):
@@ -26,9 +26,7 @@ Citations:
 Produce the final polished answer with inline [n] citations:"""
 
     async def _run(self, blackboard: Blackboard) -> Blackboard:
-        flagged = [
-            s for s in blackboard.claim_spans if s.flagged
-        ]
+        flagged = [s for s in blackboard.claim_spans if s.flagged]
 
         for span in blackboard.claim_spans:
             if not span.flagged:
@@ -43,13 +41,11 @@ Produce the final polished answer with inline [n] citations:"""
                 span.action = SpanAction.RESOLVE
 
         flagged_text = "\n".join(
-            f"- [{s.action.value}] {s.text} (score={s.critique_score})"
-            for s in flagged
+            f"- [{s.action.value}] {s.text} (score={s.critique_score})" for s in flagged
         )
 
         citations_text = "\n".join(
-            f"[{i+1}] {c.text} (doc={c.doc_id})"
-            for i, c in enumerate(blackboard.retrieved_docs)
+            f"[{i + 1}] {c.text} (doc={c.doc_id})" for i, c in enumerate(blackboard.retrieved_docs)
         )
 
         prompt = self.PROMPT.format(
@@ -86,7 +82,7 @@ Produce the final polished answer with inline [n] citations:"""
 
         # Attach citation references
         if blackboard.retrieved_docs and "[1]" not in text:
-            refs = " ".join(f"[{i+1}]" for i in range(len(blackboard.retrieved_docs)))
+            refs = " ".join(f"[{i + 1}]" for i in range(len(blackboard.retrieved_docs)))
             text = f"{text}\n\nSources: {refs}"
 
         return text.strip()

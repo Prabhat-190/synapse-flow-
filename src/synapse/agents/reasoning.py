@@ -39,7 +39,7 @@ Draft answer:"""
         await blackboard.set_draft(draft)
 
         # Build initial provenance map
-        for i, sentence in enumerate(draft.split(". ")):
+        for sentence in draft.split(". "):
             if sentence.strip():
                 source_ids = [c.doc_id for c in blackboard.retrieved_docs[:2]]
                 blackboard.provenance.link(sentence.strip(), source_ids)

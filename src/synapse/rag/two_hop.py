@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import structlog
 
-from synapse.infra.database import search_documents
 from synapse.rag.embeddings import embed_text
 
 logger = structlog.get_logger()
@@ -82,15 +81,17 @@ async def two_hop_search(
         for link_doc in links:
             for chunk in _KNOWLEDGE_BASE:
                 if chunk["doc_id"] == link_doc and chunk["id"] not in seen_ids:
-                    hop2_results.append({
-                        "doc_id": chunk["doc_id"],
-                        "chunk_id": chunk["id"],
-                        "text": chunk["content"],
-                        "score": result["score"] * 0.8,
-                        "hop": 2,
-                        "metadata": chunk["metadata"],
-                        "expanded_from": result["doc_id"],
-                    })
+                    hop2_results.append(
+                        {
+                            "doc_id": chunk["doc_id"],
+                            "chunk_id": chunk["id"],
+                            "text": chunk["content"],
+                            "score": result["score"] * 0.8,
+                            "hop": 2,
+                            "metadata": chunk["metadata"],
+                            "expanded_from": result["doc_id"],
+                        }
+                    )
                     seen_ids.add(chunk["id"])
 
     hop2_results.sort(key=lambda x: x["score"], reverse=True)
@@ -108,13 +109,15 @@ def _search_in_memory(query_embedding: list[float], top_k: int) -> list[dict]:
         doc_vec = np.array(chunk["embedding"])
         doc_norm = np.linalg.norm(doc_vec) or 1.0
         score = float(np.dot(query_vec, doc_vec) / (query_norm * doc_norm))
-        scored.append({
-            "doc_id": chunk["doc_id"],
-            "chunk_id": chunk["id"],
-            "text": chunk["content"],
-            "score": score,
-            "metadata": chunk["metadata"],
-        })
+        scored.append(
+            {
+                "doc_id": chunk["doc_id"],
+                "chunk_id": chunk["id"],
+                "text": chunk["content"],
+                "score": score,
+                "metadata": chunk["metadata"],
+            }
+        )
 
     scored.sort(key=lambda x: x["score"], reverse=True)
     return scored[:top_k]

@@ -30,18 +30,13 @@ Respond with JSON: {{"summary": "...", "preserved": ["..."], "compressed_tokens"
 
     async def _run(self, blackboard: Blackboard) -> Blackboard:
         current = blackboard.trace.total_tokens
-        max_tokens = blackboard.budget.max_tokens
         utilization = blackboard.budget.utilization(current)
 
         mode = "lossless" if utilization < 0.95 else "lossy"
 
-        critical_events = [
-            e for e in blackboard.trace.events
-            if e.agent in self.CRITICAL_AGENTS
-        ]
+        critical_events = [e for e in blackboard.trace.events if e.agent in self.CRITICAL_AGENTS]
         compressible_events = [
-            e for e in blackboard.trace.events
-            if e.agent not in self.CRITICAL_AGENTS
+            e for e in blackboard.trace.events if e.agent not in self.CRITICAL_AGENTS
         ]
 
         critical_text = "\n".join(

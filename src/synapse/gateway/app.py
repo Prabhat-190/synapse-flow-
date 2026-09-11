@@ -6,7 +6,6 @@ import asyncio
 import json
 import logging
 from contextlib import asynccontextmanager
-from typing import Any
 
 import structlog
 from fastapi import Depends, FastAPI, HTTPException, Request
@@ -18,12 +17,12 @@ from sse_starlette.sse import EventSourceResponse
 
 from synapse.agents.meta import MetaAgent
 from synapse.agents.pipeline import resume_pipeline, run_pipeline
-from synapse.observability.metrics import get_pipeline_metrics
 from synapse.config import get_settings
 from synapse.core.blackboard import Blackboard
 from synapse.core.exceptions import BudgetOverflowError, PromptInjectionError
 from synapse.gateway.security import check_rate_limit, screen_prompt_injection, verify_api_key
 from synapse.infra.database import get_trace_events_since, init_db, load_trace
+from synapse.observability.metrics import get_pipeline_metrics
 
 logger = structlog.get_logger()
 
@@ -92,7 +91,11 @@ async def injection_handler(request: Request, exc: PromptInjectionError):
     REQUEST_COUNT.labels(endpoint="query", status="blocked").inc()
     return JSONResponse(
         status_code=400,
-        content={"error": "prompt_injection_detected", "score": exc.score, "patterns": exc.patterns},
+        content={
+            "error": "prompt_injection_detected",
+            "score": exc.score,
+            "patterns": exc.patterns,
+        },
     )
 
 
@@ -212,9 +215,7 @@ async def approve_rewrite(req: RewriteApproval, api_key: str = Depends(verify_ap
     blackboard.pending_rewrites = trace.prompt_rewrites
 
     meta = MetaAgent()
-    result = await meta.approve_rewrite(
-        blackboard, req.rewrite_id, req.approved, req.approved_by
-    )
+    result = await meta.approve_rewrite(blackboard, req.rewrite_id, req.approved, req.approved_by)
     if result is None:
         raise HTTPException(status_code=404, detail="Rewrite not found")
 

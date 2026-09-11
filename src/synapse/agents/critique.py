@@ -75,15 +75,17 @@ Score >= 0.7 = supported, < 0.7 = flagged."""
             score = raw.get("score", 0.5)
             flagged = raw.get("flagged", score < 0.7)
 
-            spans.append(ClaimSpan(
-                text=text,
-                start=start,
-                end=end,
-                confidence=score,
-                critique_score=score,
-                flagged=flagged,
-                flag_reason=raw.get("reason") if flagged else None,
-                action=SpanAction.HEDGE if flagged else SpanAction.KEEP,
-            ))
+            spans.append(
+                ClaimSpan(
+                    text=text,
+                    start=start,
+                    end=end,
+                    confidence=score,
+                    critique_score=score,
+                    flagged=flagged,
+                    flag_reason=raw.get("reason") if flagged else None,
+                    action=SpanAction.HEDGE if flagged else SpanAction.KEEP,
+                )
+            )
 
         return spans

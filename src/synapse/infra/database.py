@@ -135,13 +135,15 @@ async def search_documents(query_embedding: list[float], top_k: int = 5) -> list
         doc_vec = np.array(emb)
         doc_norm = np.linalg.norm(doc_vec) or 1.0
         score = float(np.dot(query_vec, doc_vec) / (query_norm * doc_norm))
-        scored.append({
-            "doc_id": chunk.doc_id,
-            "chunk_id": chunk.id,
-            "text": chunk.content,
-            "score": score,
-            "metadata": json.loads(chunk.metadata_json or "{}"),
-        })
+        scored.append(
+            {
+                "doc_id": chunk.doc_id,
+                "chunk_id": chunk.id,
+                "text": chunk.content,
+                "score": score,
+                "metadata": json.loads(chunk.metadata_json or "{}"),
+            }
+        )
 
     scored.sort(key=lambda x: x["score"], reverse=True)
     return scored[:top_k]

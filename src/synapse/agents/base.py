@@ -36,8 +36,7 @@ class BaseAgent(ABC):
             raise
 
     @abstractmethod
-    async def _run(self, blackboard: Blackboard) -> Blackboard:
-        ...
+    async def _run(self, blackboard: Blackboard) -> Blackboard: ...
 
     async def _publish(
         self,

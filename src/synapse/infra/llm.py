@@ -89,8 +89,7 @@ class SemanticCache:
 
 class BaseLLMProvider(ABC):
     @abstractmethod
-    async def generate(self, prompt: str, system: str = "", **kwargs: Any) -> LLMResponse:
-        ...
+    async def generate(self, prompt: str, system: str = "", **kwargs: Any) -> LLMResponse: ...
 
 
 class GeminiProvider(BaseLLMProvider):
@@ -168,41 +167,92 @@ class GeminiProvider(BaseLLMProvider):
                 "with LLM reasoning for grounded, citation-backed answers [3]."
             )
         elif "critique" in prompt_lower or "score each claim" in prompt_lower:
-            text = json.dumps({
-                "spans": [
-                    {"text": "LangGraph enables stateful multi-agent workflows.", "score": 0.95, "flagged": False},
-                    {"text": "This is unsupported claim.", "score": 0.3, "flagged": True, "reason": "No citation"},
-                ]
-            })
+            text = json.dumps(
+                {
+                    "spans": [
+                        {
+                            "text": "LangGraph enables stateful multi-agent workflows.",
+                            "score": 0.95,
+                            "flagged": False,
+                        },
+                        {
+                            "text": "This is unsupported claim.",
+                            "score": 0.3,
+                            "flagged": True,
+                            "reason": "No citation",
+                        },
+                    ]
+                }
+            )
         elif "compress" in prompt_lower:
-            text = json.dumps({"summary": "Compressed context preserving key facts.", "mode": "lossy", "ratio": 0.4})
+            text = json.dumps(
+                {
+                    "summary": "Compressed context preserving key facts.",
+                    "mode": "lossy",
+                    "ratio": 0.4,
+                }
+            )
         elif "rewrite" in prompt_lower or ("meta" in prompt_lower and "prompt" in prompt_lower):
-            text = json.dumps({
-                "rewritten_prompt": "Provide a concise, citation-backed answer.",
-                "rationale": "Original prompt was ambiguous",
-            })
+            text = json.dumps(
+                {
+                    "rewritten_prompt": "Provide a concise, citation-backed answer.",
+                    "rationale": "Original prompt was ambiguous",
+                }
+            )
         elif "decide which agent should run next" in combined or "routing_decision" in combined:
-            text = json.dumps({
-                "next_agent": "decomposition",
-                "reason": "Query requires task breakdown",
-                "confidence": 0.92,
-            })
+            text = json.dumps(
+                {
+                    "next_agent": "decomposition",
+                    "reason": "Query requires task breakdown",
+                    "confidence": 0.92,
+                }
+            )
         elif "decompos" in prompt_lower or "subtask" in prompt_lower:
-            text = json.dumps({
-                "subtasks": [
-                    {"description": "Retrieve relevant documents", "agent": "retrieval", "dependencies": []},
-                    {"description": "Reason over retrieved context", "agent": "reasoning", "dependencies": ["0"]},
-                    {"description": "Critique factual claims", "agent": "critique", "dependencies": ["1"]},
-                    {"description": "Synthesize final answer", "agent": "synthesis", "dependencies": ["2"]},
-                ]
-            })
+            text = json.dumps(
+                {
+                    "subtasks": [
+                        {
+                            "description": "Retrieve relevant documents",
+                            "agent": "retrieval",
+                            "dependencies": [],
+                        },
+                        {
+                            "description": "Reason over retrieved context",
+                            "agent": "reasoning",
+                            "dependencies": ["0"],
+                        },
+                        {
+                            "description": "Critique factual claims",
+                            "agent": "critique",
+                            "dependencies": ["1"],
+                        },
+                        {
+                            "description": "Synthesize final answer",
+                            "agent": "synthesis",
+                            "dependencies": ["2"],
+                        },
+                    ]
+                }
+            )
         elif "retriev" in prompt_lower or "search" in prompt_lower:
-            text = json.dumps({
-                "results": [
-                    {"doc_id": "doc-1", "chunk_id": "c-1", "text": "LangGraph enables stateful multi-agent workflows.", "score": 0.95},
-                    {"doc_id": "doc-2", "chunk_id": "c-2", "text": "pgvector provides efficient similarity search in PostgreSQL.", "score": 0.88},
-                ]
-            })
+            text = json.dumps(
+                {
+                    "results": [
+                        {
+                            "doc_id": "doc-1",
+                            "chunk_id": "c-1",
+                            "text": "LangGraph enables stateful multi-agent workflows.",
+                            "score": 0.95,
+                        },
+                        {
+                            "doc_id": "doc-2",
+                            "chunk_id": "c-2",
+                            "text": "pgvector provides efficient similarity search in PostgreSQL.",
+                            "score": 0.88,
+                        },
+                    ]
+                }
+            )
         elif "draft answer" in prompt_lower or "reasoning agent" in prompt_lower:
             text = (
                 "LangGraph enables stateful multi-agent workflows with shared state [doc-langgraph]. "

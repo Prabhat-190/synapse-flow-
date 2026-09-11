@@ -44,9 +44,7 @@ Respond with JSON: {{"subtasks": [{{"description": "...", "agent": "...", "depen
 
         for i, st in enumerate(subtasks_raw):
             deps = st.get("dependencies", [])
-            nodes[i].dependencies = [
-                id_map[int(d)] for d in deps if int(d) in id_map
-            ]
+            nodes[i].dependencies = [id_map[int(d)] for d in deps if int(d) in id_map]
 
         dag = SubtaskDAG(root_query=blackboard.trace.query, nodes=nodes)
         await blackboard.set_dag(dag)
@@ -59,7 +57,11 @@ Respond with JSON: {{"subtasks": [{{"description": "...", "agent": "...", "depen
 
     def _default_subtasks(self) -> list[dict]:
         return [
-            {"description": "Retrieve relevant documents", "agent": "retrieval", "dependencies": []},
+            {
+                "description": "Retrieve relevant documents",
+                "agent": "retrieval",
+                "dependencies": [],
+            },
             {"description": "Reason over context", "agent": "reasoning", "dependencies": [0]},
             {"description": "Critique claims", "agent": "critique", "dependencies": [1]},
             {"description": "Synthesize answer", "agent": "synthesis", "dependencies": [2]},

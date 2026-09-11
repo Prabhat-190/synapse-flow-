@@ -39,13 +39,13 @@ async def _run_query(text: str, as_json: bool) -> None:
     if as_json:
         print(json.dumps(trace.model_dump(), indent=2, default=str))
     else:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Run ID: {trace.run_id}")
         print(f"Tokens: {trace.total_tokens}")
         print(f"Citations: {len(trace.citations)}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(trace.final_answer or "No answer generated")
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
 
 
 async def _run_eval() -> None:
@@ -55,14 +55,14 @@ async def _run_eval() -> None:
     results = await harness.run_all()
     summary = harness.summary()
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("EVALUATION RESULTS")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     for r in results:
         status = "PASS" if r.passed else "FAIL"
         print(f"  [{status}] {r.case_id} ({r.tier.value}): {r.overall:.2f}")
     print(f"\nSummary: {summary['passed']}/{summary['total']} passed, avg={summary['avg_overall']}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
 
 def _serve() -> None:

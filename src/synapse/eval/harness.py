@@ -111,12 +111,19 @@ class EvalHarness:
             tokens=trace.total_tokens,
         )
 
-        response = await self.judge.generate(prompt, system="You are an independent evaluation judge.")
+        response = await self.judge.generate(
+            prompt, system="You are an independent evaluation judge."
+        )
 
         try:
             data = json.loads(response.text)
-            required = {"correctness", "citation_score", "contradiction_resolution",
-                        "tool_efficiency", "budget_compliance"}
+            required = {
+                "correctness",
+                "citation_score",
+                "contradiction_resolution",
+                "tool_efficiency",
+                "budget_compliance",
+            }
             if not required.issubset(data.keys()):
                 return self._heuristic_score(case, trace)
             return data
