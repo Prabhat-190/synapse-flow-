@@ -157,8 +157,31 @@ class GeminiProvider(BaseLLMProvider):
     def _mock_generate(self, prompt: str, system: str) -> LLMResponse:
         """Intelligent mock for testing without API keys."""
         prompt_lower = prompt.lower()
+        combined = f"{system} {prompt}".lower()
 
-        if "route" in prompt_lower or "orchestrat" in prompt_lower:
+        # Order matters: specific agent intents before generic keyword matches
+        if "synthes" in prompt_lower or "final polished answer" in prompt_lower:
+            text = (
+                "Based on retrieved evidence, LangGraph provides stateful multi-agent "
+                "orchestration with cyclic graph support [1]. pgvector enables efficient "
+                "vector similarity search within PostgreSQL [2]. RAG combines retrieval "
+                "with LLM reasoning for grounded, citation-backed answers [3]."
+            )
+        elif "critique" in prompt_lower or "score each claim" in prompt_lower:
+            text = json.dumps({
+                "spans": [
+                    {"text": "LangGraph enables stateful multi-agent workflows.", "score": 0.95, "flagged": False},
+                    {"text": "This is unsupported claim.", "score": 0.3, "flagged": True, "reason": "No citation"},
+                ]
+            })
+        elif "compress" in prompt_lower:
+            text = json.dumps({"summary": "Compressed context preserving key facts.", "mode": "lossy", "ratio": 0.4})
+        elif "rewrite" in prompt_lower or ("meta" in prompt_lower and "prompt" in prompt_lower):
+            text = json.dumps({
+                "rewritten_prompt": "Provide a concise, citation-backed answer.",
+                "rationale": "Original prompt was ambiguous",
+            })
+        elif "decide which agent should run next" in combined or "routing_decision" in combined:
             text = json.dumps({
                 "next_agent": "decomposition",
                 "reason": "Query requires task breakdown",
@@ -180,22 +203,11 @@ class GeminiProvider(BaseLLMProvider):
                     {"doc_id": "doc-2", "chunk_id": "c-2", "text": "pgvector provides efficient similarity search in PostgreSQL.", "score": 0.88},
                 ]
             })
-        elif "critique" in prompt_lower or "score" in prompt_lower:
-            text = json.dumps({
-                "spans": [
-                    {"text": "LangGraph enables stateful multi-agent workflows.", "score": 0.95, "flagged": False},
-                    {"text": "This is unsupported claim.", "score": 0.3, "flagged": True, "reason": "No citation"},
-                ]
-            })
-        elif "synthes" in prompt_lower:
-            text = "Based on retrieved evidence, LangGraph provides stateful multi-agent orchestration [1]. pgvector enables efficient vector similarity search within PostgreSQL [2]."
-        elif "compress" in prompt_lower:
-            text = json.dumps({"summary": "Compressed context preserving key facts.", "mode": "lossy", "ratio": 0.4})
-        elif "rewrite" in prompt_lower or "meta" in prompt_lower:
-            text = json.dumps({
-                "rewritten_prompt": "Provide a concise, citation-backed answer.",
-                "rationale": "Original prompt was ambiguous",
-            })
+        elif "draft answer" in prompt_lower or "reasoning agent" in prompt_lower:
+            text = (
+                "LangGraph enables stateful multi-agent workflows with shared state [doc-langgraph]. "
+                "pgvector provides efficient similarity search in PostgreSQL [doc-pgvector]."
+            )
         else:
             text = f"Analysis complete for: {prompt[:200]}"
 

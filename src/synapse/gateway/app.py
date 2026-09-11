@@ -11,7 +11,7 @@ from typing import Any
 import structlog
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from prometheus_client import Counter, Histogram, generate_latest
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
@@ -106,6 +106,11 @@ async def budget_handler(request: Request, exc: BudgetOverflowError):
             "action": "Routed to Compression agent",
         },
     )
+
+
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health", response_model=HealthResponse)
