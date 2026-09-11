@@ -19,7 +19,7 @@ from synapse.config import get_settings
 from synapse.core.blackboard import Blackboard
 from synapse.core.exceptions import BudgetOverflowError
 from synapse.core.models import AgentRole, ExecutionTrace
-from synapse.infra.database import persist_trace
+from synapse.infra.database import load_trace, persist_trace
 
 logger = structlog.get_logger()
 
@@ -134,3 +134,26 @@ async def run_pipeline(query: str, run_id: str | None = None) -> ExecutionTrace:
         citations=len(trace.citations),
     )
     return trace
+
+
+async def resume_pipeline(run_id: str) -> ExecutionTrace:
+    """Resume a failed or incomplete pipeline from the last checkpoint."""
+    from synapse.infra.redis_bus import get_checkpoint
+
+    existing = await load_trace(run_id)
+    if existing is None:
+        raise ValueError(f"Run {run_id} not found")
+
+    if existing.status == "completed":
+        return existing
+
+    checkpoint = await get_checkpoint(run_id)
+    logger.info(
+        "pipeline_resume",
+        run_id=run_id,
+        checkpoint=bool(checkpoint),
+        events=len(existing.events),
+    )
+
+    # Re-execute pipeline; checkpoint + trace events preserve prior progress
+    return await run_pipeline(existing.query, run_id=run_id)

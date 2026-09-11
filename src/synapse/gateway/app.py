@@ -17,7 +17,8 @@ from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
 from synapse.agents.meta import MetaAgent
-from synapse.agents.pipeline import run_pipeline
+from synapse.agents.pipeline import resume_pipeline, run_pipeline
+from synapse.observability.metrics import get_pipeline_metrics
 from synapse.config import get_settings
 from synapse.core.blackboard import Blackboard
 from synapse.core.exceptions import BudgetOverflowError, PromptInjectionError
@@ -220,10 +221,37 @@ async def approve_rewrite(req: RewriteApproval, api_key: str = Depends(verify_ap
     return result.model_dump()
 
 
+@app.post("/v1/runs/{run_id}/resume")
+async def resume_run(run_id: str, api_key: str = Depends(verify_api_key)):
+    """Resume a failed pipeline from the last successfully checkpointed agent."""
+    try:
+        trace = await resume_pipeline(run_id)
+        return trace.model_dump()
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/v1/metrics")
+async def pipeline_metrics(api_key: str = Depends(verify_api_key)):
+    """Pipeline performance metrics (throughput, success rate, latency)."""
+    return get_pipeline_metrics()
+
+
 @app.post("/v1/eval/run")
-async def run_evaluation(api_key: str = Depends(verify_api_key)):
+async def run_evaluation(
+    api_key: str = Depends(verify_api_key),
+    full: bool = False,
+):
+    from synapse.eval.datasets import CORE_CASES, get_all_eval_cases
     from synapse.eval.harness import EvalHarness
 
-    harness = EvalHarness()
+    cases = get_all_eval_cases(include_generated=full) if full else CORE_CASES
+    harness = EvalHarness(cases=cases)
     results = await harness.run_all()
-    return {"results": [r.model_dump() for r in results], "summary": harness.summary()}
+    return {
+        "case_count": len(cases),
+        "results": [r.model_dump() for r in results],
+        "summary": harness.summary(),
+    }

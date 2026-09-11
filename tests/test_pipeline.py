@@ -73,11 +73,14 @@ async def test_budget_overflow():
 
 @pytest.mark.asyncio
 async def test_eval_harness():
+    from synapse.eval.datasets import CORE_CASES, get_all_eval_cases
     from synapse.eval.harness import EvalHarness
 
-    harness = EvalHarness()
+    assert len(get_all_eval_cases()) >= 100
+
+    harness = EvalHarness(cases=CORE_CASES)
     results = await harness.run_all()
-    assert len(results) == 15
+    assert len(results) == len(CORE_CASES)
     summary = harness.summary()
-    assert summary["total"] == 15
+    assert summary["total"] == len(CORE_CASES)
     assert summary["avg_overall"] > 0

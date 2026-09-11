@@ -31,6 +31,9 @@ docker-down:
 eval:
 	synapse eval
 
+load-test:
+	python scripts/load_test.py -n 20 -c 5
+
 notes:
 	python scripts/generate_notes_pdf.py
 
