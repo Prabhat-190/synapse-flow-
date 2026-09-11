@@ -2,14 +2,14 @@
 
 import pytest
 
-from atlas.agents.orchestrator import OrchestratorAgent
-from atlas.agents.decomposition import DecompositionAgent
-from atlas.core.blackboard import Blackboard
-from atlas.core.exceptions import BudgetOverflowError, PromptInjectionError
-from atlas.core.models import AgentRole
-from atlas.gateway.security import screen_prompt_injection
-from atlas.rag.embeddings import embed_text
-from atlas.rag.two_hop import two_hop_search
+from synapse.agents.orchestrator import OrchestratorAgent
+from synapse.agents.decomposition import DecompositionAgent
+from synapse.core.blackboard import Blackboard
+from synapse.core.exceptions import BudgetOverflowError, PromptInjectionError
+from synapse.core.models import AgentRole
+from synapse.gateway.security import screen_prompt_injection
+from synapse.rag.embeddings import embed_text
+from synapse.rag.two_hop import two_hop_search
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ async def test_decomposition_creates_dag(blackboard):
 
 @pytest.mark.asyncio
 async def test_full_pipeline():
-    from atlas.agents.pipeline import run_pipeline
+    from synapse.agents.pipeline import run_pipeline
 
     trace = await run_pipeline("Explain LangGraph multi-agent orchestration")
     assert trace.run_id
@@ -73,7 +73,7 @@ async def test_budget_overflow():
 
 @pytest.mark.asyncio
 async def test_eval_harness():
-    from atlas.eval.harness import EvalHarness
+    from synapse.eval.harness import EvalHarness
 
     harness = EvalHarness()
     results = await harness.run_all()

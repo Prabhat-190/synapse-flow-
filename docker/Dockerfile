@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -e ".[dev]"
 
 EXPOSE 8000
 
-CMD ["uvicorn", "atlas.gateway.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "synapse.gateway.app:app", "--host", "0.0.0.0", "--port", "8000"]

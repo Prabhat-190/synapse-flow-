@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "atlas-orchestrator"
+name = "synapse-flow"
 version = "1.0.0"
-description = "ATLAS: Adaptive Typed LangGraph Agent System — production multi-agent LLM orchestration"
+description = "SynapseFlow: Structured Intelligence Network for Agent Pipeline Execution — production multi-agent LLM orchestration"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -48,10 +48,10 @@ dev = [
 ]
 
 [project.scripts]
-atlas = "atlas.cli:main"
+synapse = "synapse.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/atlas"]
+packages = ["src/synapse"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

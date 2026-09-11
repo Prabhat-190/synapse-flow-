@@ -3,7 +3,7 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from atlas.gateway.app import app
+from synapse.gateway.app import app
 
 
 @pytest.fixture

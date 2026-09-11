@@ -1,8 +1,8 @@
-# ATLAS Architecture
+# SynapseFlow Architecture
 
 ## Overview
 
-ATLAS (Adaptive Typed LangGraph Agent System) is a production-grade multi-agent LLM orchestration platform with 8 specialized agents coordinated via a shared context blackboard.
+SynapseFlow (Structured Intelligence Network for Agent Pipeline Execution) is a production-grade multi-agent LLM orchestration platform with 8 specialized agents coordinated via a shared context blackboard.
 
 ## Agent Pipeline
 

@@ -2,16 +2,16 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: atlas
-      POSTGRES_PASSWORD: atlas
-      POSTGRES_DB: atlas
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: synapse
+      POSTGRES_DB: synapse
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U atlas"]
+      test: ["CMD-SHELL", "pg_isready -U synapse"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,7 +34,7 @@ services:
       - "8000:8000"
     env_file: .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://atlas:atlas@postgres:5432/atlas
+      DATABASE_URL: postgresql+asyncpg://synapse:synapse@postgres:5432/synapse
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
     depends_on:
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: uvicorn atlas.gateway.app:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn synapse.gateway.app:app --host 0.0.0.0 --port 8000 --reload
 
   worker:
     build:
@@ -50,7 +50,7 @@ services:
       dockerfile: docker/Dockerfile
     env_file: .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://atlas:atlas@postgres:5432/atlas
+      DATABASE_URL: postgresql+asyncpg://synapse:synapse@postgres:5432/synapse
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
     depends_on:
@@ -58,7 +58,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: celery -A atlas.infra.celery_app worker --loglevel=info -Q atlas.default
+    command: celery -A synapse.infra.celery_app worker --loglevel=info -Q synapse.default
 
 volumes:
   pgdata:

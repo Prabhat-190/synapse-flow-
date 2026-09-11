@@ -1,8 +1,8 @@
-# ATLAS — Adaptive Typed LangGraph Agent System
+# SynapseFlow — Structured Intelligence Network for Agent Pipeline Execution
 
 Production-grade **multi-agent LLM orchestration** platform with 8 specialized agents, 2-hop RAG, critique-synthesis pipeline, and human-in-the-loop prompt optimization.
 
-[![CI](https://github.com/Prabhat-190/atlas-orchestrator/actions/workflows/ci.yml/badge.svg)](https://github.com/Prabhat-190/atlas-orchestrator/actions)
+[![CI](https://github.com/Prabhat-190/synapse-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/Prabhat-190/synapse-flow/actions)
 
 ## Architecture
 
@@ -54,20 +54,20 @@ Production-grade **multi-agent LLM orchestration** platform with 8 specialized a
 
 ```bash
 # Clone and install
-git clone https://github.com/Prabhat-190/atlas-orchestrator.git
-cd atlas-orchestrator
+git clone https://github.com/Prabhat-190/synapse-flow.git
+cd synapse-flow
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Run a query (works offline with mock LLM)
-atlas query "Explain LangGraph multi-agent orchestration"
+synapse query "Explain LangGraph multi-agent orchestration"
 
 # Start API server
-atlas serve
+synapse serve
 # → http://localhost:8000/docs
 
 # Run evaluation harness
-atlas eval
+synapse eval
 ```
 
 ### Docker (full stack)
@@ -106,7 +106,7 @@ curl -X POST http://localhost:8000/v1/query \
 ## Project Structure
 
 ```
-src/atlas/
+src/synapse/
 ├── agents/          # 8 specialized agents + LangGraph pipeline
 ├── core/            # Blackboard, models, token budget, exceptions
 ├── gateway/         # FastAPI app, security, SSE
