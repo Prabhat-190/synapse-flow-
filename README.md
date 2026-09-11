@@ -2,7 +2,23 @@
 
 Production-grade **multi-agent LLM orchestration** platform with 8 specialized agents, 2-hop RAG, critique-synthesis pipeline, and human-in-the-loop prompt optimization.
 
-[![CI](https://github.com/Prabhat-190/synapse-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/Prabhat-190/synapse-flow/actions)
+[![CI](https://github.com/Prabhat-190/synapse-flow-/actions/workflows/ci.yml/badge.svg)](https://github.com/Prabhat-190/synapse-flow-/actions)
+
+## Screenshots
+
+### Swagger UI — Live API
+![Swagger UI](docs/assets/swagger_ui.png)
+
+### Health Check
+![Health endpoint](docs/assets/health_response.png)
+
+### Query Endpoint
+![Query API](docs/assets/query_endpoint.png)
+
+### CLI Pipeline Output
+![Pipeline output](docs/assets/pipeline_output.png)
+
+> **Project Notes PDF:** [docs/SynapseFlow_Notes.pdf](docs/SynapseFlow_Notes.pdf)
 
 ## Architecture
 
@@ -54,7 +70,7 @@ Production-grade **multi-agent LLM orchestration** platform with 8 specialized a
 
 ```bash
 # Clone and install
-git clone https://github.com/Prabhat-190/synapse-flow.git
+git clone https://github.com/Prabhat-190/synapse-flow-.git
 cd synapse-flow
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
