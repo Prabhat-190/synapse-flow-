@@ -5,7 +5,8 @@
 SynapseFlow coordinates **8 specialized agents** through a stateful DAG-based architecture with **2-hop RAG, critique-driven synthesis, automatic context compression, failure recovery, cost-aware model routing, and human-in-the-loop prompt optimization**.
 
 <p align="center">
-  <a href="https://github.com/Prabhat-190/synapse-flow-/actions/workflows/ci.yml"><img src="https://github.com/Prabhat-190/synapse-flow-/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Prabhat-190/synapse-flow-/actions/workflows/ci.yml"><img src="https://github.com/Prabhat-190/synapse-flow-/actions/workflows/ci<img width="10985" height="11093" alt="diagram" src="https://github.com/user-attachments/assets/b484a0cf-2547-4426-a2a2-ceb1572e5025" />
+.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/eval-100%2B%20cases-orange" alt="100+ eval cases">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT">
